@@ -31,23 +31,27 @@ import os
 class MyWebServer(socketserver.BaseRequestHandler):
 
     def handle(self):
-        BUFFER_SIZE = 1024
         self.message = ""
-
         self.data = self.request.recv(1024).strip()
         #print ("Got a request of: %s\n" % self.data)
         self.data = self.data.split(b'\r\n')[0].split(b' ')
-
-        action = self.data[0].decode("utf-8")
-        dirc = self.data[1].decode("utf-8")
-        http_version = self.data[2].decode("utf-8")
-
+        try:
+            action = self.data[0].decode("utf-8")
+        except:
+            pass
+        try:
+            dirc = self.data[1].decode("utf-8")
+        except:
+            dirc = "/"
+        try:
+            http_version = self.data[2].decode("utf-8")
+        except:
+            http_version = "HTTP/1.1"
         self.message += http_version + " "
         self.path = "www"
         if(dirc[0]!="/"):
             self.path += "/"
         self.path += dirc
-
         if(action!="GET"):
             self.message += "405 Method Not Allowed \r\n"
         elif(os.path.exists(self.path) and ("/www" in os.path.abspath(self.path))
@@ -59,26 +63,19 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 self.path += "index.html"
             if(os.path.isfile(self.path)):
                 if(".css" in self.path):
-                    self.message += "Content-Type: text/css; \r\n"
+                    self.message += "Content-Type: text/css; \r\n\r\n"
                 elif(".html" in self.path):
-                    self.message += "Content-Type: text/html; \r\n"
+                    self.message += "Content-Type: text/html; \r\n\r\n"
                 else:
-                    self.message += "Content-Type: text/plain; \r\n"
+                    self.message += "Content-Type: text/plain; \r\n\r\n"
                 file = open(self.path)
                 self.message += file.read()
         else:
             self.message += "404 Not FOUND \r\n"
 
-        #self.request.sendall(bytearray("OK",'utf-8'))
-
         # reference:
         # https://uofa-cmput404.github.io/cmput404-slides/04-HTTP.html
         # https://code.tutsplus.com/tutorials/http-headers-for-dummies--net-8039
-
-        #print(len(f.read()))
-
-        #self.message += "Content-Length: 100; \r\n"
-        #self.message += "Transfer-Encoding: chunked; \r\n\r\n"
         self.response()
 
     def response(self):
