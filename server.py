@@ -50,7 +50,15 @@ class MyWebServer(socketserver.BaseRequestHandler):
         except:
             http_version = "HTTP/1.1"
         self.message += http_version + " "
-        self.path = "www"
+        self.path = ""
+        try:
+            if(dirc[0:3]=="www"):
+                dirc = dirc[3:]
+            elif(dirc[0:4]=="/www"):
+                dirc = dirc[4:]
+        except:
+            pass
+        self.path += "www"
         if(dirc[0]!="/"):
             self.path += "/"
         self.path += dirc
@@ -84,6 +92,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
         else:
             self.message += "404 Not FOUND \r\n"
         self.response()
+        #print(self.path)
 
     def response(self):
         #print(self.message)
