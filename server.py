@@ -66,9 +66,9 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 self.path += "index.html"
                 if(os.path.exists(self.path)):
                     if(redirect):
-                        self.message += "301 Moved Permanently \r\n\r\n"
+                        self.message += "301 Moved Permanently \r\n"
                         #self.message += "Transfer-Encoding: chunked \r\n\r\n"
-                        self.message += "Location: http://127.0.0.1:8080/" + self.path + "/index.html"
+                        self.message += "Location: " + self.path[3:] +"\r\n\r\n"
                     else:
                         self.message += "200 OK \r\n"
                         self.addType(self.path)
