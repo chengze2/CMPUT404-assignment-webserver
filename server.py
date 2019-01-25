@@ -113,13 +113,3 @@ if __name__ == "__main__":
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C
     server.serve_forever()
-
-# to make a response header
-# https://uofa-cmput404.github.io/cmput404-slides/04-HTTP.html
-# https://developer.mozilla.org/en-US/docs/Glossary/Response_header
-# https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-# to handle the Content_length
-# https://stackoverflow.com/questions/19907628/transfer-encoding-chunked
-# https://www.jianshu.com/p/fa2e4e23aaaf
-# to get and handle the paths
-# https://docs.python.org/3/library/os.path.html
