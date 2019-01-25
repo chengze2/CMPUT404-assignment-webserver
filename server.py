@@ -41,6 +41,8 @@ class MyWebServer(socketserver.BaseRequestHandler):
             pass
         try:
             dirc = self.data[1].decode("utf-8")
+            if (dirc[0] != "/"):
+                dirc = "/" + dric
         except:
             dirc = "/"
         try:
@@ -52,22 +54,30 @@ class MyWebServer(socketserver.BaseRequestHandler):
         if(dirc[0]!="/"):
             self.path += "/"
         self.path += dirc
-        if(action!="GET"):
+        if(action != "GET"):
             self.message += "405 Method Not Allowed \r\n"
-        elif(os.path.exists(self.path) and ("/www" in os.path.abspath(self.path))
+        elif(os.path.exists(self.path) and (os.getcwd() in os.path.abspath(self.path))
             and (action=="GET")):
-            self.message += "200 OK \r\n"
+            redirect = False
             if(os.path.isdir(self.path)):
-                if(self.path[0]!="/"):
+                if(self.path[-1]!="/"):
                     self.path += "/"
+                    redirect = True
                 self.path += "index.html"
-            if(os.path.isfile(self.path)):
-                if(".css" in self.path):
-                    self.message += "Content-Type: text/css; \r\n\r\n"
-                elif(".html" in self.path):
-                    self.message += "Content-Type: text/html; \r\n\r\n"
+                if(os.path.exists(self.path)):
+                    if(redirect):
+                        self.message += "301 Moved Permanently \r\n\r\n"
+                        self.message += "Location: http://127.0.0.1:8080/" + self.path + "/index.html"
+                    else:
+                        self.message += "200 OK \r\n"
+                        self.addType(self.path)
+                        file = open(self.path)
+                        self.message += file.read()
                 else:
-                    self.message += "Content-Type: text/plain; \r\n\r\n"
+                    self.message += "404 Not FOUND \r\n"
+            elif(os.path.isfile(self.path)):
+                self.message += "200 OK \r\n"
+                self.addType(self.path)
                 file = open(self.path)
                 self.message += file.read()
         else:
@@ -81,6 +91,14 @@ class MyWebServer(socketserver.BaseRequestHandler):
     def response(self):
         #print(self.message)
         self.request.sendall(bytearray(self.message,'utf-8'))
+
+    def addType(self, path):
+        if(".css" in path):
+            self.message += "Content-Type: text/css; \r\n\r\n"
+        elif(".html" in path):
+            self.message += "Content-Type: text/html; \r\n\r\n"
+        else:
+            self.message += "Content-Type: text/plain; \r\n\r\n"
 
 
 if __name__ == "__main__":
