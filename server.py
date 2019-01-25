@@ -66,31 +66,34 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 self.path += "index.html"
                 if(os.path.exists(self.path)):
                     if(redirect):
-                        self.message += "301 Moved Permanently \r\n"
-                        self.message += "Transfer-Encoding: chunked \r\n\r\n"
+                        self.message += "301 Moved Permanently \r\n\r\n"
+                        #self.message += "Transfer-Encoding: chunked \r\n\r\n"
                         self.message += "Location: http://127.0.0.1:8080/" + self.path + "/index.html"
                     else:
                         self.message += "200 OK \r\n"
                         self.addType(self.path)
-                        self.message += "Transfer-Encoding: chunked \r\n\r\n"
-                        file = open(self.path)
-                        self.message += file.read()
+                        #self.message += "Transfer-Encoding: chunked \r\n\r\n"
+                        self.addContent(self.path)
                 else:
                     self.message += "404 Not FOUND \r\n"
             elif(os.path.isfile(self.path)):
                 self.message += "200 OK \r\n"
                 self.addType(self.path)
-                self.message += "Transfer-Encoding: chunked \r\n\r\n"
-                file = open(self.path)
-                self.message += file.read()
+                #self.message += "Transfer-Encoding: chunked \r\n\r\n"
+                self.addContent(self.path)
         else:
             self.message += "404 Not FOUND \r\n"
 
         # reference:
+        # to make a response header
         # https://uofa-cmput404.github.io/cmput404-slides/04-HTTP.html
-        # https://code.tutsplus.com/tutorials/http-headers-for-dummies--net-8039
-        # https://en.wikipedia.org/wiki/HTTP_301
+        # https://developer.mozilla.org/en-US/docs/Glossary/Response_header
+        # https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+        # to handle the Content_length
         # https://stackoverflow.com/questions/19907628/transfer-encoding-chunked
+        # https://www.jianshu.com/p/fa2e4e23aaaf
+        # to get and handle the paths
+        # https://docs.python.org/3/library/os.path.html
         self.response()
 
     def response(self):
@@ -99,11 +102,16 @@ class MyWebServer(socketserver.BaseRequestHandler):
 
     def addType(self, path):
         if(".css" in path):
-            self.message += "Content-Type: text/css; \r\n"
+            self.message += "Content-Type: text/css; \r\n\r\n"
         elif(".html" in path):
-            self.message += "Content-Type: text/html; \r\n"
+            self.message += "Content-Type: text/html; \r\n\r\n"
         else:
-            self.message += "Content-Type: text/plain; \r\n"
+            self.message += "Content-Type: text/plain; \r\n\r\n"
+
+    def addContent(self, path):
+        file = open(path)
+        self.message += file.read()
+        file.close()
 
 
 if __name__ == "__main__":
