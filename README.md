@@ -28,10 +28,10 @@ compatible) http://docs.python.org/2/library/socketserver.html
 References
 ==========
 * To make a response header
-** https://uofa-cmput404.github.io/cmput404-slides/04-HTTP.html
-** https://developer.mozilla.org/en-US/docs/Glossary/Response_header
-** https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+https://uofa-cmput404.github.io/cmput404-slides/04-HTTP.html
+https://developer.mozilla.org/en-US/docs/Glossary/Response_header
+https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 * To handle the Content_length
-** https://stackoverflow.com/questions/19907628/transfer-encoding-chunked
+https://stackoverflow.com/questions/19907628/transfer-encoding-chunked
 * To get and handle the paths
-** https://docs.python.org/3/library/os.path.html
+https://docs.python.org/3/library/os.path.html
